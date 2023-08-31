@@ -1,0 +1,24 @@
+library(tidyverse)
+library(rvest)
+
+html <- read_html("https://www.imdb.com/chart/top/")
+name <- html_attr(html_nodes(html, ".ipc-lockup-overlay.ipc-focusable"), 'href')
+name
+
+rurls <- paste( 'https://www.imdb.com', name, sep = "")
+rurls <-sapply(rurls, function(k) strsplit(k, split = '\\?')[[1]][1] )
+rurls
+rurls <- paste( rurls, 'ratings', sep = "")
+
+
+
+u_ratings <- c()
+
+for( i in 1:length(rurls)){
+  print(i)
+  html <-read_html(rurls[i])
+  mean <- html %>% html_elements('.sc-32706d9c-1.dRWuAv') %>% html_text()
+  mean <- strsplit(mean, split=" ")[[1]][1]
+  u_ratings <- c(u_ratings, as.numeric(mean))
+  print(u_ratings[i])
+}
